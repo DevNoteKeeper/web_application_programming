@@ -12,7 +12,20 @@
     <div class="container mt-5">
       <div class="p-4 mb-4 bg-light border rounded">
         <h1><%= title %></h1>
-        <p>Welcome to <%= title %></p>
+        <p>Enter a student id to see the grade table.</p>
+      </div>
+
+      <div class="card">
+        <div class="card-header">Search Form</div>
+        <div class="card-body">
+          <form method="post" action="/">
+            <div class="mb-3">
+              <label for="student_id" class="form-label">Student ID</label>
+              <input type="text" class="form-control" id="student_id" name="student_id" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Show grades</button>
+          </form>
+        </div>
       </div>
 
       <div class="card">
