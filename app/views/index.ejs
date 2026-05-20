@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title><%= title %></title>
     <link rel='stylesheet' href='dist/css/bootstrap.min.css' />
-    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <script src="https://d3js.org/d3.v6.js"></script>
   </head>
 
   <body>
@@ -34,6 +34,19 @@
         </div>
         </div>
         
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <button class="btn btn-link text-decoration-none p-0" type="button" data-bs-toggle="collapse"
+            data-bs-target="#gradeGraph" aria-expanded="true" aria-controls="gradeGraph">
+            <b>Average grade per quarter</b>
+          </button>
+        </div>
+        <div id="gradeGraph" class="collapse show">
+          <div class="card-body">
+            <div class="dataviz"></div>
+            </div>
       </div>
 
       <div class="card">
@@ -91,7 +104,81 @@
 
 
     </div>
-
     <script src='dist/js/bootstrap.bundle.min.js'></script>
+    <script>
+
+      let chartData = [
+      <% chartData.forEach(function(d, i){ %>
+      {
+        key: "<%= d.year %>-Q<%= d.quarter %>",
+        value: <%= Number(d.avg_grade) %>,
+      }<%= i <chartData.length-1?',':''%>
+
+      <% }) %>
+      ];
+
+      // set the dimensions and margins of the graph
+      const dataviz = document.querySelector(".dataviz");
+      const cardWidth = dataviz.clientWidth;
+      const margin = {top:10, right:30, bottom:80, left:40}, 
+      width= cardWidth -margin.left-margin.right,
+      height = 500 -margin.top-margin.bottom;
+
+      // append the svg object to the body of the page
+      const svg = d3.select(".dataviz").append("svg")
+      .attr("width", width+margin.left+margin.right)
+      .attr("height", height + margin.top + margin.bottom)
+      .append("g")
+      .attr("transform", `translate(${margin.left},${margin.top})`);
+
+      //X axis
+      const x=d3.scaleBand().range([0, width])
+      .domain(chartData.map(d => d.key)).padding(0.2);
+      svg.append("g")
+      .attr("transform", `translate(0,${height})`)
+      .call(d3.axisBottom(x))
+      .selectAll("text")
+      .attr("transform", "translate(-10,0)rotate(-45)")
+      .style("text-anchor", "end")
+
+      //Y axis
+        const y = d3.scaleLinear()
+        .domain([0, 10])
+          .nice().range([height,0]);
+        svg.append("g")
+          .call(d3.axisLeft(y))
+
+      //Bar
+      svg.selectAll("bar").data(chartData).join("rect")
+      .attr("x", d => x(d.key))
+      .attr("width", x.bandwidth())
+      .attr("fill", "#a5e976")
+      // no bar at the beginning thus:
+      .attr("height", d => height-y(0))
+      .attr("y", d=>y(0))
+
+      //Animation
+      svg.selectAll("rect")
+      .transition().duration(800)
+      .attr("y", d => y(d.value))
+      .attr("height", d=> height-y(d.value))
+      .delay((d,i) => {console.log(i); return i*100})
+
+      //Anchor
+      svg.selectAll(".label")
+      .data(chartData).join("text")
+      .attr("class", "label")
+      .attr("x", d=> x(d.key) + x.bandwidth()/2)
+      .attr("y", d=>y(0)-10)
+      .attr("text-anchor", "middle")
+      .attr("fill", "black")
+      .style("font-size", "12px")
+      .text(d => d.value.toFixed(2))
+      .transition()
+      .duration(800)
+      .attr("y", d=>y(d.value)-10)
+      .delay((d,i)=>i*100);
+      
+    </script>
   </body>
 </html>

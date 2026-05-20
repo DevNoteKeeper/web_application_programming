@@ -27,6 +27,7 @@ router.get("/", async function (req, res, next) {
   res.render("index", {
     title: "Student grades",
     grades: [],
+    chartData: [],
     student_id: "",
     student_name: "",
   });
@@ -36,7 +37,7 @@ router.post("/", async function (req, res, next) {
   const student_info = req.body.student_info;
 
   try {
-    const data = await db.any(
+    const grades = await db.any(
       `
       SELECT g.student_id, g.student, g.grade, g.quarter, g.year, g.course_code, g.course
       FROM srs.grades AS g
@@ -45,10 +46,21 @@ router.post("/", async function (req, res, next) {
       `,
       [student_info],
     );
+    const chartData = await db.any(
+      `
+      SELECT g.year, g.quarter, avg(g.grade) AS avg_grade
+      FROM srs.grades AS g
+      WHERE g.student = $1 OR g.student_id::text = $1
+      GROUP BY g.year, g.quarter
+      ORDER BY g.year, g.quarter
+      `,
+      [student_info],
+    );
 
     res.render("index", {
       title: "Student grades",
-      grades: data,
+      grades: grades,
+      chartData: chartData,
       student_info: student_info,
     });
   } catch (err) {
