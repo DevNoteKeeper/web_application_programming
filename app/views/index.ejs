@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title><%= title %></title>
     <link rel='stylesheet' href='dist/css/bootstrap.min.css' />
+    <script src="https://d3js.org/d3.v5.min.js"></script>
   </head>
 
   <body>
@@ -16,25 +17,38 @@
       </div>
 
       <div class="card">
-        <div class="card-header">Search Form</div>
-        <div class="card-body">
+        <div class="card-header">
+          <button class="btn btn-link text-decoration-none p-0" type="button" data-bs-toggle="collapse" data-bs-target="#inputCard" aria-expanded="true" aria-controls="inputCard">
+            <b>Searching Form</b>
+          </button>
+        </div>
+        <div id="inputCard" class="collapse show">
+          <div class="card-body">
           <form method="post" action="/">
             <div class="mb-3">
-              <label for="student_id" class="form-label">Student ID</label>
-              <input type="text" class="form-control" id="student_id" name="student_id" required>
+              <label for="student_info" class="form-label">Student ID or Name</label>
+              <input type="text" class="form-control" id="student_info" name="student_info" required>
             </div>
-            <button type="submit" class="btn btn-primary">Show grades</button>
+            <button type="submit" class="btn btn-dark">Show grades</button>
           </form>
         </div>
+        </div>
+        
       </div>
 
       <div class="card">
         <div class="card-header">
           <!-- Resulting data table -->
-          <b>Student <%= grades.length> 0 ? grades[0].student_id: 'no connection' %> Grade Table</b>
+          <button class="btn btn-link text-decoration-none p-0" type="button" data-bs-toggle="collapse"
+            data-bs-target="#gradeTable" aria-expanded="true" aria-controls="gradeTable">
+            <b>Student <%= grades.length> 0 ? grades[0].student_id: 'no connection' %> - <%= grades.length> 0 ? grades[0].student:
+                  'no connection' %> Grade Table</b>
+          </button>
+          </div>
+          
         </div>
-
-        <div class="card-body">
+        <div id="gradeTable" class="collapse show">
+          <div class="card-body">
           <!-- <p class="mb-0">Here comes the resulting data table</p> -->
         
         <table class="table table-striped table-bordered">
@@ -71,7 +85,11 @@
           </tbody>
         </table>
         </div>
+        </div>
+        
       </div>
+
+
     </div>
 
     <script src='dist/js/bootstrap.bundle.min.js'></script>

@@ -28,27 +28,28 @@ router.get("/", async function (req, res, next) {
     title: "Student grades",
     grades: [],
     student_id: "",
+    student_name: "",
   });
 });
 
 router.post("/", async function (req, res, next) {
-  const student_id = req.body.student_id;
+  const student_info = req.body.student_info;
 
   try {
     const data = await db.any(
       `
-      SELECT g.student_id, g.grade, g.quarter, g.year, g.course_code, g.course
+      SELECT g.student_id, g.student, g.grade, g.quarter, g.year, g.course_code, g.course
       FROM srs.grades AS g
-      WHERE g.student_id = 1010191
+      WHERE g.student = $1 OR g.student_id::text = $1
       ORDER BY g.year, g.quarter
       `,
-      [student_id],
+      [student_info],
     );
 
     res.render("index", {
       title: "Student grades",
       grades: data,
-      student_id: student_id,
+      student_info: student_info,
     });
   } catch (err) {
     console.error(err);
